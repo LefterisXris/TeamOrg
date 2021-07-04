@@ -1,0 +1,16 @@
+{
+   "short_name": "TeamOrg",
+   "name": "Team Organizing App",
+   "description": "A Progressive Web Application which can be used by any team for organizing (internal). Users, roles, statistics and events are fully supported as dynamic content.",
+   "display": "standalone",
+   "icons": [
+      {
+         "src": "icon.png",
+         "type": "image/png",
+         "sizes": "192x192"
+      }
+   ],
+   "start_url": "/",
+   "background_color": "#fafafa",
+   "theme_color": "#fafafa"
+}
