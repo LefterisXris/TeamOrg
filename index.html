@@ -2,9 +2,228 @@
 <html lang="en">
 
 <head>
+   <title>TeamOrg</title>
+   <meta charset="utf-8">
+   <meta name="author" content="Eleftherios Chrysochoidis - mai21066">
+   <meta name="description" content="Team Organization App">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+
+   <link rel="icon" type="image/ico" href="img/teamorg.ico"/>
+
+   <link rel="stylesheet" href="css/main.css">
+   <link rel="manifest" href="manifest.json">
+
+   <script src="js/main.js" defer></script>
 </head>
 
 <body>
+
+<!-- Navigation Menu -->
+<header id="navbar">
+   <div class="header-left">
+      <a href="#" id="appName">TeamOrg</a>
+   </div>
+   <div class="header-right">
+      <a href="#home" id="homeRef" class="selected" onclick="updateVisibility('home')">Home</a>
+      <a href="#users" id="usersRef" onclick="updateVisibility('users')">Users</a>
+      <a href="#roles" id="rolesRef" onclick="updateVisibility('roles')">Roles</a>
+      <a href="#events" id="eventsRef" onclick="updateVisibility('events')">Events</a>
+      <div class="settings-header">
+         <button class="settings-header-btn">Settings</button>
+         <!-- Should be able to set logo, description, colors (3) -->
+         <div class="settings-header-content">
+            <a id="edit-data">Edit Data</a>
+            <a id="new-team">New Team</a>
+            <a id="load-data">Load From File</a>
+         </div>
+      </div>
+   </div>
+</header>
+
+<!-- Home Page -->
+<div id="home">
+   <div class="team-section">
+      <img src="img/teamorg.png" alt="teamorg-logo">
+      <h4>A great football team!!</h4>
+   </div>
+   <div class="activity-section">
+      <div class="activity-section-item">
+         <img src="img/user.svg" alt="user">
+         <div class="activity-item-content">
+            <span>Use A did that!</span>
+            <span>Read by 35</span>
+         </div>
+         <button class="hide-activity-item-btn">Hide</button>
+      </div>
+      <div class="activity-section-item">
+         <img src="img/user.svg" alt="user">
+         <div class="activity-item-content">
+            <span>Use A did that!</span>
+            <span>Read by 35</span>
+         </div>
+         <button class="hide-activity-item-btn">Hide</button>
+      </div>
+   </div>
+   <div class="wrapper-section">
+      <div class="info-section">
+         <h4>Team Info</h4>
+         <ul>
+            <li>Coach: LeC</li>
+            <li>Players: 27</li>
+            <li>Events: 45</li>
+         </ul>
+      </div>
+      <hr>
+      <div class="upcoming-events-section">
+         <h4>Upcoming Events</h4>
+         <ul>
+            <li>vs Barca (July 18)</li>
+            <li>vs Real (July 24)</li>
+            <li>vs Valencia (Aug 1)</li>
+         </ul>
+      </div>
+   </div>
+</div>
+
+<!-- Users -->
+<div id="users">
+   <h2>Team users</h2>
+   <table id="users-table">
+      <thead>
+      <tr>
+         <th>name</th>
+         <th>role</th>
+         <th>pic</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+         <td>Lec</td>
+         <td>Admin</td>
+         <td>PIC</td>
+      </tr>
+      <tr>
+         <td>Cristiano</td>
+         <td>Player</td>
+         <td>PIC</td>
+      </tr>
+      </tbody>
+   </table>
+   <div class="actions">
+      <button>Add</button>
+      <button>Edit</button>
+      <button>Delete</button>
+      <button>Send Message</button>
+   </div>
+</div>
+
+<!-- Roles -->
+<div id="roles">
+   <h2>Roles</h2>
+   <table id="roles-table">
+      <thead>
+      <tr>
+         <th>name</th>
+         <th>description</th>
+         <th>Members</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+         <td>Admin</td>
+         <td>The administrators</td>
+         <td>
+            <div class="user-icons-wrapper">
+               <div class="user-with-icon">
+                  <img src="img/user.svg" alt="user">
+                  <span>lec</span>
+               </div>
+               <div class="user-with-icon">
+                  <img src="img/user.svg" alt="user">
+                  <span>cr</span>
+               </div>
+            </div>
+         </td>
+      </tr>
+      <tr>
+         <td>Users</td>
+         <td>The simple users</td>
+         <td>
+            <div class="user-icons-wrapper">
+               <div class="user-with-icon">
+                  <img src="img/user.svg" alt="user">
+                  <span>fanis</span>
+               </div>
+               <div class="user-with-icon">
+                  <img src="img/user.svg" alt="user">
+                  <span>peter</span>
+               </div>
+            </div>
+         </td>
+      </tr>
+      </tbody>
+   </table>
+   <div class="actions">
+      <button>Add</button>
+      <button>Edit</button>
+      <button>Delete</button>
+      <button>Send Message</button>
+   </div>
+</div>
+
+<!-- Events -->
+<div id="events">
+   <!-- Event type e.g. training, match, coffee, presentation etc.
+     Calendar is good idea
+     -->
+   <h2>Events</h2>
+   <div class="events-wrapper">
+      <div class="event-item">
+         <img src="img/user.svg" alt="user">
+         <div class="event-item-content">
+            <span>Use A did that!</span>
+            <span>Read by 35</span>
+         </div>
+      </div>
+      <div class="event-item">
+         <img src="img/user.svg" alt="user">
+         <div class="event-item-content">
+            <span>Use A did that!</span>
+            <span>Read by 35</span>
+         </div>
+      </div>
+   </div>
+   <div class="actions">
+      <button>Add</button>
+      <button>Edit</button>
+      <button>Delete</button>
+      <button>Send Message</button>
+   </div>
+</div>
+
+<div id="ctxMenu">
+</div>
+
+<!--<div id="install">A2HS</div>-->
+
+<!-- Modal Dialog-->
+<!--  Modal for editing Users, Roles +assign, Events  -->
+<div>
+   <div id="myModal" class="modal">
+      <div class="modal-content">
+         <span class="close">&times;</span>
+         <h3>Add new User</h3>
+         <div id="user-name">This Year Only</div>
+         <div id="user-role">With less than 30 Participants</div>
+         <div id="user-info">Reset all Filters</div>
+         <div>
+            <button>Cancel</button>
+            <button>Apply</button>
+         </div>
+      </div>
+   </div>
+</div>
+
 </body>
 
 </html>
