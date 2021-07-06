@@ -11,9 +11,11 @@
    <link rel="icon" type="image/ico" href="img/teamorg.ico"/>
 
    <link rel="stylesheet" href="css/main.css">
+   <link rel="stylesheet" href="css/modal.css">
    <link rel="manifest" href="manifest.json">
 
    <script src="js/main.js" defer></script>
+   <script src="js/modal.js" defer></script>
 </head>
 
 <body>
@@ -109,12 +111,6 @@
       </tr>
       </tbody>
    </table>
-   <div class="actions">
-      <button>Add</button>
-      <button>Edit</button>
-      <button>Delete</button>
-      <button>Send Message</button>
-   </div>
 </div>
 
 <!-- Roles -->
@@ -163,12 +159,6 @@
       </tr>
       </tbody>
    </table>
-   <div class="actions">
-      <button>Add</button>
-      <button>Edit</button>
-      <button>Delete</button>
-      <button>Send Message</button>
-   </div>
 </div>
 
 <!-- Events -->
@@ -193,12 +183,6 @@
          </div>
       </div>
    </div>
-   <div class="actions">
-      <button>Add</button>
-      <button>Edit</button>
-      <button>Delete</button>
-      <button>Send Message</button>
-   </div>
 </div>
 
 <div id="ctxMenu">
@@ -206,19 +190,41 @@
 
 <!--<div id="install">A2HS</div>-->
 
+<div id="actions">
+   <div class="actions-wrapper">
+      <button id="add-new-entry-btn">Add</button>
+      <button id="edit-entry-btn">Edit</button>
+   </div>
+   <div class="actions-wrapper">
+      <button id="delete-entry-btn">Delete</button>
+      <button>Send Message</button>
+   </div>
+</div>
+
 <!-- Modal Dialog-->
 <!--  Modal for editing Users, Roles +assign, Events  -->
 <div>
-   <div id="myModal" class="modal">
+   <div id="genericModal" class="modal">
       <div class="modal-content">
-         <span class="close">&times;</span>
-         <h3>Add new User</h3>
-         <div id="user-name">This Year Only</div>
-         <div id="user-role">With less than 30 Participants</div>
-         <div id="user-info">Reset all Filters</div>
-         <div>
-            <button>Cancel</button>
-            <button>Apply</button>
+         <span id="closeModalSpan" class="close">&times;</span>
+         <h3 id="modal-title">Add new User</h3>
+         <div id="modal-form">
+            <span id="modal-description">Fill in new User's information</span>
+            <div class="entry">
+               <label for="name">Name:</label>
+               <input id="name" placeholder="User name...">
+            </div>
+            <div class="entry">
+               <label for="imagePicker">Upload Image:</label>
+               <input id="imagePicker" type="file" accept="image/*">
+               <div class="img-upload-wrapper">
+                  <img id="image" src="">
+               </div>
+            </div>
+         </div>
+         <div class="modal-buttons">
+            <button type="button" id="cancelModalBtn" onclick="cancel()">Cancel</button>
+            <button type="button" id="applyModalBtn" onclick="applyChanges()">Apply</button>
          </div>
       </div>
    </div>

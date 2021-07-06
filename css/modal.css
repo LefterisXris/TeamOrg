@@ -1,0 +1,139 @@
+.modal {
+   display: none; /* Hidden by default */
+   position: fixed; /* Stay in place */
+   z-index: 1; /* Sit on top */
+   padding-top: 100px; /* Location of the box */
+   left: 0;
+   top: 0;
+   width: 100%; /* Full width */
+   height: 100%; /* Full height */
+   overflow: auto; /* Enable scroll if needed */
+   background-color: rgb(0,0,0); /* Fallback color */
+   background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+.modal .modal-content {
+   background-color: var(--primary-contrast);
+   margin: auto;
+   padding: 20px;
+   border: 1px solid var(--secondary-light);
+   width: 40%;
+}
+
+.modal .modal-content .close {
+   color: #aaaaaa;
+   float: right;
+   font-size: 28px;
+   font-weight: bold;
+}
+
+.close:hover, .close:focus {
+   color: var(--secondary-contrast);
+   text-decoration: none;
+   cursor: pointer;
+}
+
+.modal #modal-description {
+   font-family: Helvetica, sans-serif;
+   font-style: italic;
+   font-size: 17px;
+}
+
+.entry {
+   display: flex;
+   flex-direction: row;
+   margin: 10px 0 10px 0;
+}
+
+.entry label {
+   width: 30%;
+   font-weight: bold;
+   align-self: center;
+}
+
+.entry input, .entry textarea {
+   width: 70%;
+}
+
+.modal input {
+   padding: 10px;
+   width: 100%;
+   font-size: 17px;
+   font-family: Helvetica, sans-serif;
+   border: 1px solid #aaaaaa;
+}
+
+/* Mark input boxes that gets an error on validation: */
+.modal input.invalid {
+   background-color: #ffdddd;
+}
+
+.modal span::after {
+   padding-left: 5px;
+}
+
+.modal input:invalid + span::after {
+   content: '✖';
+}
+
+.modal input:valid+span::after {
+   content: '✓';
+}
+
+.modal .modal-buttons {
+   display: flex;
+   justify-content: flex-end;
+}
+
+.modal .modal-buttons button {
+   margin: 5px;
+}
+
+.modal button {
+   background-color: #04AA6D;
+   border-radius: 35px;
+   color: #ffffff;
+   border: none;
+   padding: 10px 20px;
+   font-size: 17px;
+   font-family: Helvetica, sans-serif;
+   cursor: pointer;
+}
+
+.modal button:hover {
+   opacity: 0.8;
+}
+
+#cancelBtn {
+   background-color: #bbbbbb;
+}
+
+
+/* Breakpoints */
+
+@media only screen and (max-width: 900px) {
+   .modal .modal-content {
+      width: 50%;
+   }
+}
+@media only screen and (max-width: 600px) {
+   .modal .modal-content {
+      width: 70%;
+   }
+
+   .entry {
+      flex-direction: column;
+      margin: 10px;
+   }
+
+   .entry label {
+      width: unset;
+      font-weight: bold;
+      align-self: center;
+   }
+
+   .entry input, .entry textarea {
+      width: unset;
+   }
+}
+@media only screen and (max-width: 400px) {}
