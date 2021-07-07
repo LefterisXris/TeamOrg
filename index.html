@@ -90,75 +90,13 @@
 <!-- Users -->
 <div id="users">
    <h2>Team users</h2>
-   <table id="users-table">
-      <thead>
-      <tr>
-         <th>name</th>
-         <th>role</th>
-         <th>pic</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr>
-         <td>Lec</td>
-         <td>Admin</td>
-         <td>PIC</td>
-      </tr>
-      <tr>
-         <td>Cristiano</td>
-         <td>Player</td>
-         <td>PIC</td>
-      </tr>
-      </tbody>
-   </table>
+   <table id="users-table"></table>
 </div>
 
 <!-- Roles -->
 <div id="roles">
    <h2>Roles</h2>
-   <table id="roles-table">
-      <thead>
-      <tr>
-         <th>name</th>
-         <th>description</th>
-         <th>Members</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr>
-         <td>Admin</td>
-         <td>The administrators</td>
-         <td>
-            <div class="user-icons-wrapper">
-               <div class="user-with-icon">
-                  <img src="img/user.svg" alt="user">
-                  <span>lec</span>
-               </div>
-               <div class="user-with-icon">
-                  <img src="img/user.svg" alt="user">
-                  <span>cr</span>
-               </div>
-            </div>
-         </td>
-      </tr>
-      <tr>
-         <td>Users</td>
-         <td>The simple users</td>
-         <td>
-            <div class="user-icons-wrapper">
-               <div class="user-with-icon">
-                  <img src="img/user.svg" alt="user">
-                  <span>fanis</span>
-               </div>
-               <div class="user-with-icon">
-                  <img src="img/user.svg" alt="user">
-                  <span>peter</span>
-               </div>
-            </div>
-         </td>
-      </tr>
-      </tbody>
-   </table>
+   <table id="roles-table"></table>
 </div>
 
 <!-- Events -->
@@ -167,22 +105,7 @@
      Calendar is good idea
      -->
    <h2>Events</h2>
-   <div class="events-wrapper">
-      <div class="event-item">
-         <img src="img/user.svg" alt="user">
-         <div class="event-item-content">
-            <span>Use A did that!</span>
-            <span>Read by 35</span>
-         </div>
-      </div>
-      <div class="event-item">
-         <img src="img/user.svg" alt="user">
-         <div class="event-item-content">
-            <span>Use A did that!</span>
-            <span>Read by 35</span>
-         </div>
-      </div>
-   </div>
+   <div id="events-wrapper"></div>
 </div>
 
 <div id="ctxMenu">
@@ -210,17 +133,6 @@
          <h3 id="modal-title">Add new User</h3>
          <div id="modal-form">
             <span id="modal-description">Fill in new User's information</span>
-            <div class="entry">
-               <label for="name">Name:</label>
-               <input id="name" placeholder="User name...">
-            </div>
-            <div class="entry">
-               <label for="imagePicker">Upload Image:</label>
-               <input id="imagePicker" type="file" accept="image/*">
-               <div class="img-upload-wrapper">
-                  <img id="image" src="">
-               </div>
-            </div>
          </div>
          <div class="modal-buttons">
             <button type="button" id="cancelModalBtn" onclick="cancel()">Cancel</button>
@@ -229,6 +141,32 @@
       </div>
    </div>
 </div>
+
+<div id="event-item-template" class="event-item">
+   <div class="user-wrapper">
+      <img src="img/user.svg" alt="user">
+      <span></span>
+   </div>
+   <div class="event-item-content">
+      <div class="event-item-content-container">
+         <span class="event-item-actual-content">User A did that!</span>
+         <span class="event-item-date"></span>
+      </div>
+      <div class="nested">
+         <div class="emojis">
+            <span>👍</span>
+            <span>💪</span>
+            <span>😍</span>
+            <span>🥳</span>
+            <span>😂</span>
+            <span>😱</span>
+            <span>😞</span>
+         </div>
+         <span class="readBy">Read by 35</span>
+      </div>
+   </div>
+</div>
+
 
 </body>
 
