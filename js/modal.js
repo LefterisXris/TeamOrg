@@ -31,16 +31,19 @@ function applyUsersChanges() {
       if (!user)
          return;
       user.name = document.getElementById('name').value.trim();
+      user.role = document.getElementById('roles-list').value.trim();
+      user.pic = document.getElementById('icons-list').value.trim();
    } else {
       // creation mode
       users.data.push({
          id: users.data.length,
          name: document.getElementById('name').value.trim(),
-         role: 'User',
-         pic: 'myPic'
+         role: document.getElementById('roles-list').value.trim(),
+         pic: document.getElementById('icons-list').value.trim()
       });
    }
    popUsers();
+   popRoles();
 }
 
 function applyRolesChanges() {
@@ -49,19 +52,29 @@ function applyRolesChanges() {
       const role = roles.data.find(role => role.id === selectedEntry.id);
       if (!role)
          return;
+
+      users.data.filter(u => u.role === role.name).forEach(u => u.role = null);
       role.name = document.getElementById('name').value.trim();
       role.description = document.getElementById('description').value.trim();
       role.members = document.getElementById('members').value.trim().split(',');
+      role.members.forEach(member => {
+         const user = users.data.find(u => u.name === member);
+         if (user)
+            user.role = role.name
+      });
    } else {
       // creation mode
+      const members = document.getElementById('members').value.trim().split(',');
       roles.data.push({
          id: roles.data.length,
          name: document.getElementById('name').value.trim(),
          description: document.getElementById('description').value.trim(),
-         members: document.getElementById('members').value.trim().split(','),
+         members: members,
       });
+      members.forEach(member => users.data.find(u => u.name === member).role = role.name);
    }
    popRoles();
+   popUsers();
 }
 
 function applyEventsChanges() {
@@ -74,7 +87,7 @@ function applyEventsChanges() {
 
       event.userId = parseInt(document.getElementById('users-list').value.trim());
       event.content = document.getElementById('content').value.trim();
-      event.date = new Date(document.getElementById('date').value.trim()).getDate();
+      event.date = new Date(document.getElementById('date').value.trim()).getTime();
       event.readBy = 0;
    } else {
       // creation mode
@@ -82,7 +95,7 @@ function applyEventsChanges() {
          id: events.data.length,
          userId: parseInt(document.getElementById('users-list').value.trim()),
          content: document.getElementById('content').value.trim(),
-         date: new Date(document.getElementById('date').value.trim()).getDate(),
+         date: new Date(document.getElementById('date').value.trim()).getTime(),
          readBy: 0
       });
    }
@@ -117,6 +130,7 @@ function prepareUserModal() {
    modalTitle.innerText = 'Add new User';
    modalDescription.innerText = 'Fill in new User\'s information';
 
+   // Name
    const divEntry = document.createElement('div');
    divEntry.classList.add('entry');
 
@@ -137,6 +151,56 @@ function prepareUserModal() {
    divEntry.appendChild(nameInput);
 
    modalForm.appendChild(divEntry);
+
+   // Role
+   const divRoleEntry = document.createElement('div');
+   divRoleEntry.classList.add('entry');
+
+   const roleLabel = document.createElement('label');
+   roleLabel.setAttribute('for', 'roles-list');
+   roleLabel.innerText = 'Role:';
+
+   const rolesSelection = document.createElement('select');
+   rolesSelection.setAttribute('id', 'roles-list');
+   roles.data.forEach(role => {
+      const opt = document.createElement('option');
+      opt.setAttribute('value', role.name);
+      opt.innerText = role.name;
+      rolesSelection.appendChild(opt)
+   })
+
+   // set data
+   if (selectedEntry) {
+      rolesSelection.value = selectedEntry.role;
+   }
+
+   divRoleEntry.appendChild(roleLabel);
+   divRoleEntry.appendChild(rolesSelection);
+   modalForm.appendChild(divRoleEntry);
+
+   // User Icon
+   const divIconEntry = document.createElement('div');
+   divIconEntry.classList.add('entry');
+
+   const iconLabel = document.createElement('label');
+   iconLabel.setAttribute('for', 'icons-list');
+   iconLabel.innerText = 'Icon:';
+
+   const iconsSelection = document.createElement('select');
+   iconsSelection.setAttribute('id', 'icons-list');
+   icons.forEach(icon => {
+      const opt = document.createElement('option');
+      opt.setAttribute('value', icon.name);
+      opt.innerText = icon.name;
+      iconsSelection.appendChild(opt)
+   })
+   if (selectedEntry) {
+      iconsSelection.value = selectedEntry.pic;
+   }
+
+   divIconEntry.appendChild(iconLabel);
+   divIconEntry.appendChild(iconsSelection);
+   modalForm.appendChild(divIconEntry);
 }
 
 function prepareRoleModal() {
@@ -173,7 +237,7 @@ function prepareRoleModal() {
 
    const nameInput2 = document.createElement('input');
    nameInput2.setAttribute('id', 'description');
-   nameInput2.setAttribute('placeholder', 'Role description...');
+   nameInput2.setAttribute('placeholder', 'Description...');
 
    if (selectedEntry) {
       nameInput2.value = selectedEntry.description;
@@ -194,7 +258,7 @@ function prepareRoleModal() {
    nameInput3.setAttribute('placeholder', 'Members...');
 
    if (selectedEntry) {
-      nameInput3.value = selectedEntry.members.join(',');
+      nameInput3.value = users.data.filter(user => user.role === selectedEntry.name).map(u => u.name).join(',');
    }
    divEntry3.appendChild(label3);
    divEntry3.appendChild(nameInput3);
@@ -228,7 +292,7 @@ function prepareEventsModal() {
 
    // set data
    if (selectedEntry) {
-      // userSelection.value = selectedEntry.name;
+      userSelection.value = selectedEntry.userId;
    }
 
    divEntry.appendChild(label);
@@ -268,7 +332,7 @@ function prepareEventsModal() {
    dateInput.setAttribute('placeholder', 'Role name...');
 
    if (selectedEntry) {
-      dateInput.value = selectedEntry.date;
+      dateInput.value = new Date(selectedEntry.date).toISOString().split('T')[0];
    }
    divDateEntry.appendChild(dateLabel);
    divDateEntry.appendChild(dateInput);
@@ -288,6 +352,23 @@ function deleteEntry(component) {
          break;
       case 'events':
          events.data = events.data.filter(roleData => roleData.id !== selectedEntry.id);
+         popEvents();
+         break;
+      default:
+         return;
+   }
+   selectedEntry = null;
+}
+
+function refreshData(component) {
+   switch (component) {
+      case 'users':
+         popUsers();
+         break;
+      case 'roles':
+         popRoles();
+         break;
+      case 'events':
          popEvents();
          break;
       default:
@@ -322,22 +403,28 @@ function addListeners() {
    });
 
    // Action for Adding a new entry (based on the selected component)
-   document.getElementById('add-new-entry-btn').addEventListener('click', function openModal1(e) {
+   document.getElementById('add-new-entry-btn').addEventListener('click', function openModalNew(e) {
       selectedEntry = null;
       modal.style.display = 'block';
       prepareModal(selectedComponent);
    });
 
    // Action for Editing the selected entry (based on the selected component)
-   document.getElementById('edit-entry-btn').addEventListener('click', function openModal1(e) {
+   document.getElementById('edit-entry-btn').addEventListener('click', function openModalEdit(e) {
       modal.style.display = 'block';
       prepareModal(selectedComponent);
    });
 
    // Action for Deleting the selected entry (based on the selected component)
-   document.getElementById('delete-entry-btn').addEventListener('click', function openModal1(e) {
+   document.getElementById('delete-entry-btn').addEventListener('click', function deleteActiveEntry(e) {
       if (selectedEntry && selectedComponent)
          deleteEntry(selectedComponent);
+   });
+
+   // Action for Refreshing data (based on the selected component)
+   document.getElementById('refresh-data-btn').addEventListener('click', function refreshActiveData(e) {
+      if (selectedComponent)
+         refreshData(selectedComponent);
    });
 
 }

@@ -301,7 +301,7 @@ function popRoles() {
       const roleValuesArray = Object.keys(roleData).filter(key => visibleHeaderKeys.includes(key)).map(key => roleData[key]);
       // preprocess members column
 
-      const membersWrapper = generateMembersWrapper(roleValuesArray.pop());
+      const membersWrapper = generateMembersWrapper(roleValuesArray.pop(), roleData.name);
       roleValuesArray.push(membersWrapper.innerHTML);
 
       const row = createTableDataRow(roleValuesArray)
@@ -311,11 +311,11 @@ function popRoles() {
    rolesTable.appendChild(rolesBody);
 }
 
-function generateMembersWrapper(membersData) {
+function generateMembersWrapper(membersData, roleName) {
    const wrapper = document.createElement('div');
    wrapper.classList.add('member-icons-wrapper');
 
-   membersData.forEach(member => {
+   users.data.filter(user => user.role === roleName).map(u => u.name).forEach(member => {
       const memberDiv = document.createElement('div');
       memberDiv.classList.add('user-with-icon');
       const memberImg = document.createElement('img');
@@ -590,17 +590,13 @@ const roles = {
          id: 0,
          name: 'Admin',
          description: 'Administrator role',
-         members: [
-            'lec', 'ka', 'kot'
-         ]
+         members: []
       },
       {
          id: 1,
          name: 'Player',
          description: 'Simple users role',
-         members: [
-            'tony', 'maria', 'dimitra'
-         ]
+         members: []
       }
    ]
 }
@@ -648,10 +644,21 @@ const events = {
    ]
 }
 
+const icons = [
+   { id: 0, name: 'img/user.svg' },
+   { id: 1, name: 'img/user.svg' },
+   { id: 2, name: 'img/user.svg' },
+   { id: 3, name: 'img/user.svg' },
+   { id: 4, name: 'img/user.svg' },
+];
+
 const usersTable = document.getElementById('users-table');
 const rolesTable = document.getElementById('roles-table');
 const eventsWrapper = document.getElementById('events-wrapper');
 const eventsItemTemplate = document.getElementById('event-item-template');
+
+
+
 
 popUsers();
 popRoles();
