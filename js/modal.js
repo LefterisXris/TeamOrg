@@ -65,21 +65,28 @@ function applyRolesChanges() {
 }
 
 function applyEventsChanges() {
+
    if (selectedEntry) {
       // edit mode
-      const user = users.data.find(user => user.id === selectedEntry.id);
-      if (!user)
+      const event = events.data.find(event => event.id === selectedEntry.id);
+      if (!event)
          return;
-      user.name = document.getElementById('name').value.trim();
+
+      event.userId = parseInt(document.getElementById('users-list').value.trim());
+      event.content = document.getElementById('content').value.trim();
+      event.date = new Date(document.getElementById('date').value.trim()).getDate();
+      event.readBy = 0;
    } else {
       // creation mode
-      users.data.push({
-         id: users.data.length,
-         name: document.getElementById('name').value.trim(),
-         role: 'User',
-         pic: 'myPic'
+      events.data.push({
+         id: events.data.length,
+         userId: parseInt(document.getElementById('users-list').value.trim()),
+         content: document.getElementById('content').value.trim(),
+         date: new Date(document.getElementById('date').value.trim()).getDate(),
+         readBy: 0
       });
    }
+   popEvents();
 }
 
 /**
@@ -207,22 +214,66 @@ function prepareEventsModal() {
    divEntry.classList.add('entry');
 
    const label = document.createElement('label');
-   label.setAttribute('for', 'name');
-   label.innerText = 'Name:';
+   label.setAttribute('for', 'users-list');
+   label.innerText = 'Author:';
 
-   const nameInput = document.createElement('input');
-   nameInput.setAttribute('id', 'name');
-   nameInput.setAttribute('placeholder', 'User name...');
+   const userSelection = document.createElement('select');
+   userSelection.setAttribute('id', 'users-list');
+   users.data.forEach(user => {
+      const opt = document.createElement('option');
+      opt.setAttribute('value', user.id);
+      opt.innerText = user.name;
+      userSelection.appendChild(opt)
+   })
 
    // set data
    if (selectedEntry) {
-      nameInput.value = selectedEntry.name;
+      // userSelection.value = selectedEntry.name;
    }
 
    divEntry.appendChild(label);
-   divEntry.appendChild(nameInput);
-
+   divEntry.appendChild(userSelection);
    modalForm.appendChild(divEntry);
+
+   // Event content
+   const contentEntry = document.createElement('div');
+   contentEntry.classList.add('entry');
+
+   const contentLabel = document.createElement('label');
+   contentLabel.setAttribute('for', 'content');
+   contentLabel.innerText = 'Event\'s content:';
+
+   const contentInput = document.createElement('input');
+   contentInput.setAttribute('id', 'content');
+   contentInput.setAttribute('placeholder', 'Event content (HTML is supported)...');
+
+   if (selectedEntry) {
+      contentInput.value = selectedEntry.content;
+   }
+   contentEntry.appendChild(contentLabel);
+   contentEntry.appendChild(contentInput);
+   modalForm.appendChild(contentEntry);
+
+   // Date
+   const divDateEntry = document.createElement('div');
+   divDateEntry.classList.add('entry');
+
+   const dateLabel = document.createElement('label');
+   dateLabel.setAttribute('for', 'date');
+   dateLabel.innerText = 'Date:';
+
+   const dateInput = document.createElement('input');
+   dateInput.setAttribute('id', 'date');
+   dateInput.setAttribute('type', 'date');
+   dateInput.setAttribute('placeholder', 'Role name...');
+
+   if (selectedEntry) {
+      dateInput.value = selectedEntry.date;
+   }
+   divDateEntry.appendChild(dateLabel);
+   divDateEntry.appendChild(dateInput);
+   modalForm.appendChild(divDateEntry);
+
 }
 
 function deleteEntry(component) {
@@ -236,12 +287,11 @@ function deleteEntry(component) {
          popRoles();
          break;
       case 'events':
+         events.data = events.data.filter(roleData => roleData.id !== selectedEntry.id);
+         popEvents();
          break;
       default:
          return;
-   }
-   if (selectedEntry) {
-
    }
    selectedEntry = null;
 }

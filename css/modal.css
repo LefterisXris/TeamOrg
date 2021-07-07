@@ -51,11 +51,11 @@
    align-self: center;
 }
 
-.entry input, .entry textarea {
+.entry input, .entry textarea, .entry select {
    width: 70%;
 }
 
-.modal input {
+.modal input, .modal select {
    padding: 10px;
    width: 100%;
    font-size: 17px;
