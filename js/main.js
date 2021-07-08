@@ -82,6 +82,8 @@ function toggleSortConfig(config, key) {
 
 
 function sort(objData) {
+   if (!objData || !objData.length)
+      return;
    const key = objData.config.sort.sortBy;
    const sortMode = objData.config.sort.sortMode;
    const data = objData.data;
@@ -113,6 +115,15 @@ function sort(objData) {
 
 function db() {
    return JSON.parse(localStorage.getItem(TEAMORG_KEY));
+}
+
+function persist() {
+   const team = {
+      users,
+      roles,
+      events
+   }
+   localStorage.setItem(TEAMORG_KEY, JSON.stringify(team));
 }
 
 // the default css configuration for the main components of the app
@@ -338,6 +349,10 @@ function clearTable(table) {
       body.remove();
 }
 
+function clone(obj) {
+   return JSON.parse(JSON.stringify(obj));
+}
+
 function sortEventsData() {
    const sortBy = document.getElementById('sortBy').value;
    const sortMode = document.getElementById('sortMode').value;
@@ -459,12 +474,26 @@ function registerListeners() {
 
 // If application hasn't been setup yet, navigate to the setup page
 if (db() == null) {
-   window.onload = function () {
-      // window.location.href = "setup.html";
+   const baseObj = {
+      config: {
+         headers: {
+
+         },
+         sort: {
+
+         }
+      },
+      data: []
    }
+   const team = {
+      users: clone(baseObj),
+      roles: clone(baseObj),
+      events: clone(baseObj)
+   }
+   localStorage.setItem(TEAMORG_KEY, JSON.stringify(team));
 }
 
-const users = {
+const users = db().users; /*{
    config: {
       headers: {
          id: {
@@ -517,9 +546,9 @@ const users = {
          pic: 'img/user-female-1.svg',
       }
    ]
-}
+}*/
 
-const roles = {
+const roles = db().roles; /*{
    config: {
       headers: {
          id: {
@@ -566,9 +595,9 @@ const roles = {
          members: []
       }
    ]
-}
+}*/
 
-const events = {
+const events = db().events; /*{
    config: {
       headers: {
          id: {
@@ -617,7 +646,7 @@ const events = {
          readBy: 0,
       }
    ]
-}
+}*/
 
 const icons = [
    {id: 0, name: 'img/user.svg'},
@@ -643,7 +672,7 @@ popUsers();
 popRoles();
 popEvents();
 const interval = setInterval(function increaseReadBy() {
-   // every 30 seconds, increase the 'read by' indication
+   // every 10 seconds, increase the 'read by' indication
    events.data.forEach(event => {
       const step = Math.floor(Math.random() * (10 - 1 + 1) + 1);
       event.readBy += step;
@@ -651,6 +680,6 @@ const interval = setInterval(function increaseReadBy() {
          event.readBy = 0;
    });
    popEvents();
-}, 30000);
+}, 10000);
 
 registerListeners();

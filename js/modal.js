@@ -22,6 +22,7 @@ function applyChanges() {
    resetModal();
    selectedEntry = null;
    modal.style.display = 'none';
+   persist();
 }
 
 function applyUsersChanges() {
@@ -358,6 +359,7 @@ function deleteEntry(component) {
          return;
    }
    selectedEntry = null;
+   persist();
 }
 
 function refreshData(component) {

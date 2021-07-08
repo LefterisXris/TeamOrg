@@ -7,11 +7,25 @@ self.addEventListener('install', function (event) {
                 '/manifest.json',
                 /* Javascript */
                 '/js/main.js',
+                '/js/modal.js',
                 /* CSS */
                 '/css/main.css',
-                'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css',
+                '/css/modal.css',
                 /* Fonts */
                 /* Images */
+               '/img/teamorg.ico',
+               '/img/teamorg.png',
+               '/img/user.svg',
+               '/img/user-artist.svg',
+               '/img/user-boss.svg',
+               '/img/user-female-1.svg',
+               '/img/user-female-2.svg',
+               '/img/user-female-3.svg',
+               '/img/user-male-1.svg',
+               '/img/user-male-2.svg',
+               '/img/user-male-3.svg',
+               '/img/user-male-4.svg',
+               '/img/user-male-5.svg',
             ]);
         })
     );

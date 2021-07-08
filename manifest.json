@@ -5,9 +5,9 @@
    "display": "standalone",
    "icons": [
       {
-         "src": "icon.png",
+         "src": "teamorg.png",
          "type": "image/png",
-         "sizes": "192x192"
+         "sizes": "200x2002"
       }
    ],
    "start_url": "/",

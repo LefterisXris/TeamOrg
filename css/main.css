@@ -515,9 +515,3 @@ header a:hover {
    }
 
 }
-
-@media only screen and (max-width: 400px) {
-   .actions-wrapper {
-      flex-direction: column;
-   }
-}
