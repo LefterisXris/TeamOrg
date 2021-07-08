@@ -391,15 +391,17 @@ function resetModal() {
 function addListeners() {
 
    // Modal handling
-   window.onclick = function(event) {
+   window.onclick = function (event) {
       if (event.target === modal) {
          modal.style.display = 'none';
+         selectedEntry = null;
       }
    }
 
    // Closing modal
    document.getElementById('closeModalSpan').addEventListener('click', function closeModal(e) {
       modal.style.display = 'none';
+      selectedEntry = null;
    });
 
    // Action for Adding a new entry (based on the selected component)
@@ -411,8 +413,10 @@ function addListeners() {
 
    // Action for Editing the selected entry (based on the selected component)
    document.getElementById('edit-entry-btn').addEventListener('click', function openModalEdit(e) {
-      modal.style.display = 'block';
-      prepareModal(selectedComponent);
+      if (selectedEntry && selectedComponent) {
+         modal.style.display = 'block';
+         prepareModal(selectedComponent);
+      }
    });
 
    // Action for Deleting the selected entry (based on the selected component)

@@ -48,19 +48,21 @@ function createTableRow(dataArr, rowElement) {
 /**
  * Creates an HTML table row (tr) containing all the header data (th) of the provided array
  * @param headerDataArr The array with the header data
+ * @param sortConfig The sort configuration
  * @returns {HTMLTableRowElement} the generated html row (tr element with th data)
  */
-function createTableHeaderRow(headerDataArr) {
-   const headerRow = createTableRow(headerDataArr[0], 'th');
-
-   // Add the context menu listener for show/hide columns functionality
-   headerRow.addEventListener('contextmenu', function showHeaderContextMenu(e) {
-      const table = headerRow.closest('table');
-      generateContextMenu(headerDataArr, e.clientX, e.clientY, table.id);
-      e.preventDefault();
-   }, false);
-
-   return headerRow;
+function createTableHeaderRow(headerDataArr, sortConfig) {
+   const row = document.createElement('tr');
+   for (let cellValue of headerDataArr) {
+      const cellElem = document.createElement('th');
+      cellElem.innerHTML = cellValue.label;
+      cellElem.setAttribute('entryKey', cellValue.name);
+      if (sortConfig && sortConfig.sortBy === cellValue.name) {
+         cellElem.setAttribute('sortMode', sortConfig.sortMode);
+      }
+      row.appendChild(cellElem);
+   }
+   return row;
 }
 
 /**
@@ -72,151 +74,41 @@ function createTableDataRow(rowDataArr) {
    return createTableRow(rowDataArr, 'td');
 }
 
-
-// Show Hide functionality
-
-/**
- * Hides a specific column from the provided table
- * @param tableId The id of the table that the column belongs to
- * @param columnIndex the index of column in the table
- */
-function hideColumn(tableId, columnIndex) {
-   columnIndex++; // column indexing starts at 0
-   const nodes = document.querySelectorAll(`#${tableId} tr td:nth-child(${columnIndex}), #${tableId} tr th:nth-child(${columnIndex})`);
-   nodes.forEach(node => node.setAttribute('hidden', 'true'));
-   // console.log(`Hiding column '${columnIndex}' from table '${tableId}'`);
+function toggleSortConfig(config, key) {
+   const mode = !config.sort.sortMode ? 'asc' : config.sort.sortMode === 'asc' ? 'desc' : null;
+   config.sort.sortBy = key;
+   config.sort.sortMode = mode;
 }
 
-/**
- * Shows a specific column from the provided table
- * @param tableId The id of the table that the column belongs to
- * @param columnIndex the index of column in the table
- */
-function showColumn(tableId, columnIndex) {
-   columnIndex++;
-   const nodes = document.querySelectorAll(`#${tableId} tr td:nth-child(${columnIndex}), #${tableId} tr th:nth-child(${columnIndex})`);
-   nodes.forEach(node => node.removeAttribute('hidden'));
-   // console.log(`Showing column '${columnIndex}' from table '${tableId}'`);
-}
 
-/**
- * Clears the data and hides the contextMenu
- */
-function clearCtxMenu() {
-   const ctxMenu = document.getElementById("ctxMenu");
-   if (ctxMenu) {
-      setTimeout(function hideContextMenu(e) {
-         ctxMenu.innerHTML = '';
-         ctxMenu.style.visibility = 'hidden';
-      }, 50);
-   }
-}
-
-function isCtxMenuOpen() {
-   return document.getElementById('ctxMenu').innerHTML !== '';
-}
-
-/**
- * Populates the contextMenu with the provided data
- */
-function generateContextMenu(headerArray, x, y, tableId) {
-   const ctxMenu = document.getElementById('ctxMenu');
-   ctxMenu.innerHTML = '';
-
-   for (let i = 0; i < headerArray[0].length; i++) {
-      const headerItem = headerArray[0][i];
-
-      const contextRow = document.createElement('div');
-
-      const chBox = document.createElement('input');
-      chBox.setAttribute('type', 'checkbox');
-      chBox.setAttribute('id', 'chBox-' + headerItem);
-      chBox.setAttribute('colIndex', '' + i);
-      if (headerArray[1][i])
-         chBox.setAttribute('checked', 'true');
-      else
-         chBox.removeAttribute('checked');
-
-      const item = document.createElement('label');
-      item.setAttribute('for', 'chBox-' + headerItem);
-      item.innerHTML = headerItem;
-
-      contextRow.appendChild(chBox);
-      contextRow.appendChild(item);
-
-      // CheckBox listener
-      chBox.addEventListener('change', function onCheckBoxChange(e) {
-         if (this.checked) {
-            headerArray[1][i] = true;
-            showColumn(tableId, this.getAttribute('colIndex'));
-         } else {
-            headerArray[1][i] = false;
-            hideColumn(tableId, this.getAttribute('colIndex'));
-         }
-
-         // if all columns are hidden, hide the table and enable the 'reset' button
-         if (headerArray[1].every(v => v === false)) {
-            const table = document.getElementById(tableId);
-            table.setAttribute('hidden', 'true');
-
-            const resetBtn = document.createElement('button');
-            resetBtn.innerHTML = 'Reset table columns';
-            resetBtn.setAttribute('class', 'resetButton');
-            resetBtn.addEventListener('click', function resetColumns(e) {
-               table.removeAttribute('hidden');
-               document.querySelectorAll(`#${tableId} th`).forEach(th => {
-                  showColumn(tableId, th.cellIndex);
-               });
-               for (let j = 0; j < headerArray[1].length; j++) {
-                  headerArray[1][j] = true;
-               }
-               resetBtn.remove();
-            }, false);
-
-            table.parentElement.appendChild(resetBtn);
-            clearCtxMenu();
-         }
-      }, false);
-
-      ctxMenu.appendChild(contextRow);
-   }
-
-   const menuStyle = ctxMenu.style;
-   menuStyle.top = y + 'px';
-   menuStyle.left = x + 'px';
-   menuStyle.visibility = 'visible';
-}
-
-function sortData(tableId, dataArr, headerArr, th) {
-
-   const desc = th.getAttribute('sortBy') === 'desc';
-   const colIndex = th.cellIndex;
+function sort(objData) {
+   const key = objData.config.sort.sortBy;
+   const sortMode = objData.config.sort.sortMode;
+   const data = objData.data;
 
    let compareFn;
-   switch (headerArr[2][colIndex]) {
+   switch (objData.config.headers[key].type) {
       case 'numeric':
-         compareFn = (a, b) => a[colIndex] - b[colIndex];
+         compareFn = (a, b) => a[key] - b[key];
          break;
       case 'text':
-         compareFn = (a, b) => ('' + a[colIndex]).localeCompare('' + b[colIndex]);
+         compareFn = (a, b) => ('' + a[key]).localeCompare('' + b[key]);
          break;
-      case 'html':
-         compareFn = (a, b) => {
-            const tmpElem1 = document.createElement('div');
-            tmpElem1.innerHTML = a[colIndex];
-            const tmpElem2 = document.createElement('div');
-            tmpElem2.innerHTML = b[colIndex];
-            return tmpElem1.querySelector('div:first-child').innerText - tmpElem2.querySelector('div:first-child').innerText;
-         }
-         break;
-      case 'none':
-      case '':
+      default:
          return; // no sort
    }
-   console.log(`Sorting table '${tableId}' on column '${th.innerText}' in '${desc ? 'desc' : 'asc'}' mode comparing ${headerArr[2][colIndex]}`);
-   dataArr.sort((a, b) => compareFn(a, b));
-   if (desc)
-      dataArr.reverse();
+   data.sort((a, b) => compareFn(a, b));
+   if (sortMode === 'desc')
+      data.reverse();
+
+   /*if (sortMode === 'asc') {
+      data.sort((a,b) => a[key].localeCompare(b[key]));
+   } else if (sortMode === 'desc') {
+      data.sort((a,b) => b[key].localeCompare(a[key]));
+   } else {
+      // reset sorting
+      data.sort((a,b) => a.id - b.id);
+   }*/
 }
 
 function db() {
@@ -266,19 +158,36 @@ function resetMainComponents() {
 
 function popUsers() {
    clearTable(usersTable);
+   sort(users);
 
    // Add headers
    const usersHead = document.createElement('thead');
    const visibleHeaderKeys = Object.keys(users.config.headers).filter(key => users.config.headers[key].visible);
-   const visibleHeaderLabels = visibleHeaderKeys.map(key => users.config.headers[key].label);
-   usersHead.appendChild(createTableRow(visibleHeaderLabels, 'th'));
+   const visibleEntries = visibleHeaderKeys.map(key => users.config.headers[key]);
+
+   usersHead.appendChild(createTableHeaderRow(visibleEntries, users.config.sort));
    usersTable.appendChild(usersHead);
+
+   // Add listeners for sorting
+   usersTable.querySelectorAll('th').forEach(th => th.addEventListener('mouseup', function (e) {
+      if (e.button !== 0)
+         return;
+
+      const keyToSort = th.getAttribute('entryKey');
+      if (keyToSort) {
+         toggleSortConfig(users.config, keyToSort)
+         popUsers();
+      }
+   }, false));
 
    // Add data
    const usersBody = document.createElement('tbody');
    users.data.forEach(userData => {
       const userValuesArray = Object.keys(userData).filter(key => visibleHeaderKeys.includes(key)).map(key => userData[key]);
-      const row = createTableDataRow(userValuesArray)
+      userValuesArray.pop();
+      const membersWrapper = generateUserWrapper(userData);
+      userValuesArray.push(membersWrapper.innerHTML);
+      const row = createTableDataRow(userValuesArray);
       row.setAttribute('entryId', userData.id);
       usersBody.appendChild(row);
    });
@@ -287,13 +196,26 @@ function popUsers() {
 
 function popRoles() {
    clearTable(rolesTable);
+   sort(roles);
 
    // Add headers
    const rolesHead = document.createElement('thead');
    const visibleHeaderKeys = Object.keys(roles.config.headers).filter(key => roles.config.headers[key].visible);
-   const visibleHeaderLabels = visibleHeaderKeys.map(key => roles.config.headers[key].label);
-   rolesHead.appendChild(createTableRow(visibleHeaderLabels, 'th'));
+   const visibleEntries = visibleHeaderKeys.map(key => roles.config.headers[key]);
+   rolesHead.appendChild(createTableHeaderRow(visibleEntries, roles.config.sort));
    rolesTable.appendChild(rolesHead);
+
+   // Add listeners for sorting
+   rolesTable.querySelectorAll('th').forEach(th => th.addEventListener('mouseup', function (e) {
+      if (e.button !== 0)
+         return;
+
+      const keyToSort = th.getAttribute('entryKey');
+      if (keyToSort) {
+         toggleSortConfig(roles.config, keyToSort)
+         popRoles();
+      }
+   }, false));
 
    // Add data
    const rolesBody = document.createElement('tbody');
@@ -315,13 +237,13 @@ function generateMembersWrapper(membersData, roleName) {
    const wrapper = document.createElement('div');
    wrapper.classList.add('member-icons-wrapper');
 
-   users.data.filter(user => user.role === roleName).map(u => u.name).forEach(member => {
+   users.data.filter(user => user.role === roleName).forEach(member => {
       const memberDiv = document.createElement('div');
       memberDiv.classList.add('user-with-icon');
       const memberImg = document.createElement('img');
-      memberImg.setAttribute('src', 'img/user.svg');
+      memberImg.setAttribute('src', member.pic);
       const memberSpan = document.createElement('span');
-      memberSpan.innerText = member;
+      memberSpan.innerText = member.name;
 
       memberDiv.appendChild(memberImg);
       memberDiv.appendChild(memberSpan);
@@ -334,14 +256,37 @@ function generateMembersWrapper(membersData, roleName) {
    return container;
 }
 
+function generateUserWrapper(user) {
+   const wrapper = document.createElement('div');
+   wrapper.classList.add('member-icons-wrapper');
+
+   const memberDiv = document.createElement('div');
+   memberDiv.classList.add('user-with-icon');
+   const memberImg = document.createElement('img');
+   memberImg.setAttribute('src', user.pic);
+   const memberSpan = document.createElement('span');
+   memberSpan.innerText = user.name;
+
+   memberDiv.appendChild(memberImg);
+   memberDiv.appendChild(memberSpan);
+
+   wrapper.appendChild(memberDiv);
+
+   const container = document.createElement('div');
+   container.appendChild(wrapper);
+   return container;
+}
+
 function popEvents() {
    // clear the dom element
-   while(eventsWrapper.firstChild)
+   while (eventsWrapper.firstChild)
       eventsWrapper.firstChild.remove();
+
+   sort(events);
 
    events.data.forEach(event => {
       const relatedUser = users.data.find(user => user.id === event.userId);
-      if (!relatedUser){
+      if (!relatedUser) {
          console.error('Could not find user with id ' + event.userId);
          return;
       }
@@ -367,7 +312,7 @@ function popEvents() {
 
       const eventDateElement = eventItem.querySelector('.event-item-date');
       if (eventDateElement)
-         eventDateElement.innerText = new Date(event.date).toLocaleDateString() + ' ' + new Date(event.date).toLocaleTimeString() ;
+         eventDateElement.innerText = new Date(event.date).toLocaleDateString() + ' ' + new Date(event.date).toLocaleTimeString();
 
       const readByElem = eventItem.querySelector('.readBy');
       if (readByElem)
@@ -391,6 +336,20 @@ function clearTable(table) {
    const body = table.querySelector('tbody');
    if (body)
       body.remove();
+}
+
+function sortEventsData() {
+   const sortBy = document.getElementById('sortBy').value;
+   const sortMode = document.getElementById('sortMode').value;
+   if (sortBy && sortBy !== 'none') {
+      events.config.sort.sortBy = sortBy;
+      events.config.sort.sortMode = sortMode;
+      popEvents();
+   } else if (sortBy === 'none') {
+      events.config.sort.sortBy = 'id';
+      events.config.sort.sortMode = 'asc';
+      popEvents();
+   }
 }
 
 function registerListeners() {
@@ -494,20 +453,6 @@ function registerListeners() {
       // Edit color, logo, team name
    });
 
-   document.addEventListener('click', function disposeContextMenuOnClick(e) {
-      if (e.button !== 0 || e.target.closest('#ctxMenu') != null)
-         return; // context menu is clicked, thus no action is required
-      clearCtxMenu();
-   }, false);
-
-   document.addEventListener('keydown', function disposeContextMenuOnEsc(e) {
-      if (e.code === 'Escape') {
-         clearCtxMenu();
-         document.getElementById('tournamentFilterModal').style.display = 'none';
-         document.getElementById('evolutionFilterModal').style.display = 'none';
-      }
-   }, false);
-
 }
 
 // Main Execution
@@ -524,24 +469,32 @@ const users = {
       headers: {
          id: {
             label: 'id',
+            name: 'id',
             type: 'numeric',
             visible: false
          },
          name: {
             label: 'Name',
+            name: 'name',
             type: 'text',
             visible: true
          },
          role: {
             label: 'Role',
+            name: 'role',
             type: 'text',
             visible: true
          },
          pic: {
             label: 'User Pic',
+            name: 'pic',
             type: 'image',
             visible: true
          },
+      },
+      sort: {
+         sortBy: 'id',
+         sortMode: 'asc'
       }
    },
    data: [
@@ -549,13 +502,19 @@ const users = {
          id: 0,
          name: 'Lefteris',
          role: 'Admin',
-         pic: 'img/user.svg',
+         pic: 'img/user-male-1.svg',
       },
       {
          id: 1,
-         name: 'Cristiano',
+         name: 'Nikos',
          role: 'Player',
-         pic: 'img/teamorg.png',
+         pic: 'img/user-male-2.svg',
+      },
+      {
+         id: 2,
+         name: 'Xristina',
+         role: 'Player',
+         pic: 'img/user-female-1.svg',
       }
    ]
 }
@@ -565,24 +524,32 @@ const roles = {
       headers: {
          id: {
             label: 'id',
+            name: 'id',
             type: 'numeric',
             visible: false
          },
          name: {
             label: 'Name',
+            name: 'name',
             type: 'text',
             visible: true
          },
          description: {
             label: 'Description',
+            name: 'description',
             type: 'text',
             visible: true
          },
          members: {
             label: 'Members',
+            name: 'members',
             type: 'array',
             visible: true
          },
+      },
+      sort: {
+         sortBy: 'id',
+         sortMode: 'asc'
       }
    },
    data: [
@@ -606,24 +573,32 @@ const events = {
       headers: {
          id: {
             label: 'id',
+            name: 'id',
             type: 'numeric',
             visible: false
          },
          userId: {
             label: 'User',
+            name: 'userId',
             type: 'numeric',
             visible: false
          },
          date: {
             label: 'Date',
+            name: 'date',
             type: 'numeric',
             visible: true
          },
          readBy: {
             label: 'Read By',
+            name: 'readBy',
             type: 'numeric',
             visible: true
          }
+      },
+      sort: {
+         sortBy: 'id',
+         sortMode: 'asc'
       }
    },
    data: [
@@ -645,11 +620,17 @@ const events = {
 }
 
 const icons = [
-   { id: 0, name: 'img/user.svg' },
-   { id: 1, name: 'img/user.svg' },
-   { id: 2, name: 'img/user.svg' },
-   { id: 3, name: 'img/user.svg' },
-   { id: 4, name: 'img/user.svg' },
+   {id: 0, name: 'img/user.svg'},
+   {id: 1, name: 'img/user-male-1.svg'},
+   {id: 2, name: 'img/user-male-2.svg'},
+   {id: 3, name: 'img/user-male-3.svg'},
+   {id: 4, name: 'img/user-male-4.svg'},
+   {id: 5, name: 'img/user-male-5.svg'},
+   {id: 6, name: 'img/user-female-1.svg'},
+   {id: 7, name: 'img/user-female-2.svg'},
+   {id: 8, name: 'img/user-female-3.svg'},
+   {id: 9, name: 'img/user-artist.svg'},
+   {id: 10, name: 'img/user-boss.svg'},
 ];
 
 const usersTable = document.getElementById('users-table');
@@ -658,15 +639,13 @@ const eventsWrapper = document.getElementById('events-wrapper');
 const eventsItemTemplate = document.getElementById('event-item-template');
 
 
-
-
 popUsers();
 popRoles();
 popEvents();
 const interval = setInterval(function increaseReadBy() {
    // every 30 seconds, increase the 'read by' indication
    events.data.forEach(event => {
-      const step = Math.floor(Math.random() * (10-1+1) + 1);
+      const step = Math.floor(Math.random() * (10 - 1 + 1) + 1);
       event.readBy += step;
       if (event.readBy > 1000)
          event.readBy = 0;

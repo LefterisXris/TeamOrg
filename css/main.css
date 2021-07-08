@@ -12,7 +12,9 @@
 
    --padding-mini: 5px;
    --padding-mid: 10px;
-} /* var(--primary-main); */
+}
+
+/* var(--primary-main); */
 
 /**************
 *** Generic ***
@@ -50,11 +52,11 @@ table thead tr {
    color: white;
 }
 
-table th[sortBy=asc]:before {
+table th[sortMode=asc]:before {
    content: "↑ ";
 }
 
-table th[sortBy=desc]:before {
+table th[sortMode=desc]:before {
    content: "↓ "
 }
 
@@ -257,6 +259,11 @@ header a:hover {
    flex-direction: row;
 }
 
+.member-icons-wrapper img {
+   width: 24px;
+   height: 24px;
+}
+
 .user-with-icon {
    display: flex;
    flex-direction: row;
@@ -411,32 +418,11 @@ header a:hover {
 #actions button:hover {
    background-color: var(--primary-main);
 }
+
 #actions button:active {
    background-color: var(--primary-main);
    box-shadow: 0 5px var(--secondary-main);
    transform: translateY(4px);
-}
-
-#ctxMenu {
-   position: fixed;
-   z-index: 10;
-   visibility: hidden;
-
-   padding: 5px;
-   min-width: 100px;
-   background: #fff;
-   color: #555;
-   border: 1px solid #C6C6C6;
-}
-
-#ctxMenu div {
-   color: #555;
-   position: relative;
-}
-
-#ctxMenu div:hover {
-   color: #fff;
-   background: #3879D9;
 }
 
 .resetButton, .filter-button {
@@ -453,6 +439,10 @@ header a:hover {
 .resetButton:hover, .filter-button:hover {
    background-color: #7fb1bf;
    font-style: italic;
+}
+
+.sort-options {
+   margin: var(--padding-mini);
 }
 
 @media only screen and (max-width: 900px) {

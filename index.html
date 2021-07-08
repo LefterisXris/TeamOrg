@@ -105,10 +105,21 @@
      Calendar is good idea
      -->
    <h2>Events</h2>
+   <div class="sort-options">
+      <label for="sortBy">Sort By:</label>
+      <select id="sortBy" onchange="sortEventsData()">
+         <option value="none">None</option>
+         <option value="userId">User</option>
+         <option value="date">Date</option>
+         <option value="readBy">ReadBy</option>
+      </select>
+      <label for="sortMode">Mode:</label>
+      <select id="sortMode" onchange="sortEventsData()">
+         <option value="asc">Asc</option>
+         <option value="desc">Desc</option>
+      </select>
+   </div>
    <div id="events-wrapper"></div>
-</div>
-
-<div id="ctxMenu">
 </div>
 
 <!--<div id="install">A2HS</div>-->
