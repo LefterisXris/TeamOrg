@@ -71,7 +71,11 @@ function applyRolesChanges() {
          description: document.getElementById('description').value.trim(),
          members: members,
       });
-      members.forEach(member => users.data.find(u => u.name === member).role = role.name);
+      members.forEach(member => {
+         const usr = users.data.find(u => u.name === member);
+         if (usr)
+            usr.role = document.getElementById('name').value.trim();
+      });
    }
 }
 

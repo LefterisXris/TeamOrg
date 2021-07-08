@@ -34,7 +34,6 @@
          <button class="settings-header-btn">Settings</button>
          <!-- Should be able to set logo, description, colors (3) -->
          <div class="settings-header-content">
-            <a id="edit-data">Edit Data</a>
             <a id="clear-data">Clear Data</a>
             <a id="load-data">Load From File</a>
          </div>
@@ -94,12 +93,14 @@
 <!-- Users -->
 <div id="users">
    <h2>Team users</h2>
+   <div id="no-users-msg">There are not any User yet. Feel free to create new users using the below buttons</div>
    <table id="users-table"></table>
 </div>
 
 <!-- Roles -->
 <div id="roles">
    <h2>Roles</h2>
+   <div id="no-roles-msg">There are not any Role yet. Feel free to create new roles using the below buttons</div>
    <table id="roles-table"></table>
 </div>
 
@@ -109,6 +110,7 @@
      Calendar is good idea
      -->
    <h2>Events</h2>
+   <div id="no-events-msg">There are not any Event/Post yet. Feel free to create new Events/Posts using the below buttons</div>
    <div class="sort-options">
       <label for="sortBy">Sort By:</label>
       <select id="sortBy" onchange="sortEventsData()">

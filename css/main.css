@@ -511,6 +511,10 @@ header a:hover {
    margin: var(--padding-mini);
 }
 
+#no-users-msg, #no-roles-msg, #no-events-msg {
+   display: none;
+}
+
 @media only screen and (max-width: 900px) {
 
    #home div.main-section {

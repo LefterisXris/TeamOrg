@@ -256,6 +256,12 @@ function popMain() {
 function popUsers() {
    clearTable(usersTable);
    sort(users);
+   if (users.data.length === 0) {
+      noUsrMsg.style.display = 'block';
+      return;
+   } else {
+      noUsrMsg.style.display = 'none';
+   }
 
    // Add headers
    const usersHead = document.createElement('thead');
@@ -294,6 +300,12 @@ function popUsers() {
 function popRoles() {
    clearTable(rolesTable);
    sort(roles);
+   if (roles.data.length === 0) {
+      noRoleMsg.style.display = 'block';
+      return;
+   } else {
+      noRoleMsg.style.display = 'none';
+   }
 
    // Add headers
    const rolesHead = document.createElement('thead');
@@ -380,6 +392,12 @@ function popEvents() {
       eventsWrapper.firstChild.remove();
 
    sort(events);
+   if (events.data.length === 0) {
+      noEventMsg.style.display = 'block';
+      return;
+   } else {
+      noEventMsg.style.display = 'none';
+   }
 
    events.data.forEach(event => {
       const relatedUser = users.data.find(user => user.id === event.userId);
@@ -544,6 +562,7 @@ function registerListeners() {
    document.getElementById('clear-data').addEventListener('click', function clearApplicationData(e) {
       if (confirm('All data will be deleted. Are you sure? Action can not be reverted')) {
          localStorage.clear();
+         initializeAppObject();
          location.reload();
       }
    });
@@ -584,7 +603,7 @@ function initializeAppObject() {
       events: clone(baseObj)
    }
 
-   team.users.headers = {
+   team.users.config.headers = {
       id: {
          label: 'id',
          name: 'id',
@@ -611,7 +630,7 @@ function initializeAppObject() {
       },
    };
 
-   team.roles.headers = {
+   team.roles.config.headers = {
       id: {
          label: 'id',
          name: 'id',
@@ -638,7 +657,7 @@ function initializeAppObject() {
       },
    };
 
-   team.events.headers = {
+   team.events.config.headers = {
       id: {
          label: 'id',
          name: 'id',
@@ -720,6 +739,10 @@ const usersTable = document.getElementById('users-table');
 const rolesTable = document.getElementById('roles-table');
 const eventsWrapper = document.getElementById('events-wrapper');
 const eventsItemTemplate = document.getElementById('event-item-template');
+
+const noUsrMsg = document.getElementById('no-users-msg');
+const noRoleMsg = document.getElementById('no-roles-msg');
+const noEventMsg = document.getElementById('no-events-msg');
 
 let reviewIndex = 0;
 
