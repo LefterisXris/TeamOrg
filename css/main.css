@@ -172,7 +172,7 @@ header a:hover {
 }
 
 .settings-header:hover .settings-header-btn {
-   background-color: #111;
+   background-color: var(--secondary-main);
 }
 
 .settings-header-content {
@@ -190,7 +190,7 @@ header a:hover {
 }
 
 .settings-header-content a:hover {
-   background-color: #111;
+   background-color: var(--secondary-main);
 }
 
 .settings-header:hover .settings-header-content {

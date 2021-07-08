@@ -82,11 +82,14 @@ function toggleSortConfig(config, key) {
 
 
 function sort(objData) {
-   if (!objData || !objData.length)
+   if (!objData || !objData.data || !objData.data.length)
       return;
    const key = objData.config.sort.sortBy;
    const sortMode = objData.config.sort.sortMode;
    const data = objData.data;
+
+   if (!key || ! sortMode)
+      return;
 
    let compareFn;
    switch (objData.config.headers[key].type) {
@@ -102,15 +105,6 @@ function sort(objData) {
    data.sort((a, b) => compareFn(a, b));
    if (sortMode === 'desc')
       data.reverse();
-
-   /*if (sortMode === 'asc') {
-      data.sort((a,b) => a[key].localeCompare(b[key]));
-   } else if (sortMode === 'desc') {
-      data.sort((a,b) => b[key].localeCompare(a[key]));
-   } else {
-      // reset sorting
-      data.sort((a,b) => a.id - b.id);
-   }*/
 }
 
 function db() {
@@ -580,10 +574,6 @@ function registerListeners() {
          });
          input.click();
       }
-   });
-
-   document.getElementById('edit-data').addEventListener('click', function editBasicData(e) {
-      // Edit color, logo, team name
    });
 
 }
