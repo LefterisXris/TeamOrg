@@ -22,6 +22,7 @@ function applyChanges() {
    resetModal();
    selectedEntry = null;
    modal.style.display = 'none';
+   refreshData();
    persist();
 }
 
@@ -43,8 +44,6 @@ function applyUsersChanges() {
          pic: document.getElementById('icons-list').value.trim()
       });
    }
-   popUsers();
-   popRoles();
 }
 
 function applyRolesChanges() {
@@ -74,8 +73,6 @@ function applyRolesChanges() {
       });
       members.forEach(member => users.data.find(u => u.name === member).role = role.name);
    }
-   popRoles();
-   popUsers();
 }
 
 function applyEventsChanges() {
@@ -100,7 +97,6 @@ function applyEventsChanges() {
          readBy: 0
       });
    }
-   popEvents();
 }
 
 /**
@@ -345,20 +341,18 @@ function deleteEntry(component) {
    switch (component) {
       case 'users':
          users.data = users.data.filter(userData => userData.id !== selectedEntry.id);
-         popUsers();
          break;
       case 'roles':
          roles.data = roles.data.filter(roleData => roleData.id !== selectedEntry.id);
-         popRoles();
          break;
       case 'events':
          events.data = events.data.filter(roleData => roleData.id !== selectedEntry.id);
-         popEvents();
          break;
       default:
          return;
    }
    selectedEntry = null;
+   refreshData();
    persist();
 }
 
@@ -374,6 +368,10 @@ function refreshData(component) {
          popEvents();
          break;
       default:
+         popMain();
+         popUsers();
+         popRoles();
+         popEvents();
          return;
    }
    selectedEntry = null;

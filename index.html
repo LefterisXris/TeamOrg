@@ -44,47 +44,51 @@
 
 <!-- Home Page -->
 <div id="home">
-   <div class="team-section">
-      <img src="img/teamorg.png" alt="teamorg-logo">
-      <h4>A great football team!!</h4>
-   </div>
-   <div class="activity-section">
-      <div class="activity-section-item">
-         <img src="img/user.svg" alt="user">
-         <div class="activity-item-content">
-            <span>Use A did that!</span>
-            <span>Read by 35</span>
+   <div class="main-section">
+      <div class="team-intro-section">
+         <img src="img/teamorg.png" alt="teamorg-logo">
+         <span class="title">TeamOrg</span>
+         <span class="promo">Keep in touch with your team!!</span>
+         <span>
+         Having a team with multiple members, may be challenging.
+         With <strong>TeamOrg</strong> you can have your team
+         organized and keep in touch with all its members.
+      </span>
+         <span>
+         Navigate to the
+         <strong><a href="#users" onclick="updateVisibility('users')">
+            Users
+         </a></strong>
+         section, to view, edit or add users on your team. Each use
+         can be assigned to a role and be manageable in high level
+         through its role.
+      </span>
+         <span>
+         To view, edit or add roles, navigate to the
+         <strong><a href="#roles" onclick="updateVisibility('roles')">
+            Roles
+         </a></strong> section.
+      </span>
+         <span>
+         Check the activity of your team, from
+         <strong><a href="#events" onclick="updateVisibility('events')">
+            Events
+         </a></strong> section. There you can check all the available
+         events or posts of any member of your team.
+      </span>
+      </div>
+      <div class="team-info-section">
+         <div id="team-info">
+            <h4>Team Info</h4>
          </div>
-         <button class="hide-activity-item-btn">Hide</button>
-      </div>
-      <div class="activity-section-item">
-         <img src="img/user.svg" alt="user">
-         <div class="activity-item-content">
-            <span>Use A did that!</span>
-            <span>Read by 35</span>
+         <hr>
+         <div id="recent-posts">
+            <h4>Recent Posts</h4>
          </div>
-         <button class="hide-activity-item-btn">Hide</button>
       </div>
    </div>
-   <div class="wrapper-section">
-      <div class="info-section">
-         <h4>Team Info</h4>
-         <ul>
-            <li>Coach: LeC</li>
-            <li>Players: 27</li>
-            <li>Events: 45</li>
-         </ul>
-      </div>
-      <hr>
-      <div class="upcoming-events-section">
-         <h4>Upcoming Events</h4>
-         <ul>
-            <li>vs Barca (July 18)</li>
-            <li>vs Real (July 24)</li>
-            <li>vs Valencia (Aug 1)</li>
-         </ul>
-      </div>
-   </div>
+   <h4>TeamOrg Reviews:</h4>
+   <div id="teamorg-reviews-section"></div>
 </div>
 
 <!-- Users -->

@@ -167,6 +167,92 @@ function resetMainComponents() {
    });
 }
 
+function popMain() {
+
+   // Populate the Team Info section
+   const oldList = teamInfo.querySelector('ul');
+   if (oldList)
+      oldList.remove();
+
+   const list = document.createElement('ul');
+   const usersInfo = document.createElement('li');
+   usersInfo.innerText = 'Users: ' + users.data.length;
+   list.appendChild(usersInfo)
+
+   const rolesInfo = document.createElement('li');
+   rolesInfo.innerText = 'Roles: ' + roles.data.length;
+   list.appendChild(rolesInfo)
+
+   const eventsInfo = document.createElement('li');
+   eventsInfo.innerText = 'Events: ' + events.data.length;
+   list.appendChild(eventsInfo)
+
+   teamInfo.appendChild(list);
+
+   // Populate the latest posts section
+   const oldPostsList = recentPosts.querySelector('ul');
+   if (oldPostsList)
+      oldPostsList.remove();
+
+   const recentPostsList = document.createElement('ul');
+   const eventsData = clone(events.data); // clone it to sort them properly
+   eventsData.sort((a, b) => a.date > b.date).slice(0, 3).forEach(event => {
+      const eventElem = document.createElement('li');
+
+      const usr = users.data.find(u => u.id === event.userId);
+      let icon;
+      if (usr) {
+         icon = document.createElement('img');
+         icon.setAttribute('src', usr.pic);
+         icon.setAttribute('alt', usr.name);
+      } else {
+         icon = document.createElement('img');
+         icon.setAttribute('src', 'img/user.svg');
+         icon.setAttribute('alt', 'no-pic-user');
+      }
+      const eventWrapper = document.createElement('div');
+      const content = document.createElement('div');
+      content.innerHTML = event.content
+      const dots = document.createElement('span');
+      dots.innerText = '...';
+      eventWrapper.appendChild(icon);
+      eventWrapper.appendChild(content);
+      eventWrapper.appendChild(dots);
+      eventElem.appendChild(eventWrapper);
+      recentPostsList.appendChild(eventElem)
+   })
+
+   recentPosts.appendChild(recentPostsList);
+
+   // Populate the reviews section
+   while (reviews.firstChild)
+      reviews.firstChild.remove();
+
+   reviewData.forEach(review => {
+
+      const reviewWrap = document.createElement('div');
+      reviewWrap.classList.add('review', 'fade');
+      const reviewImg = document.createElement('img');
+      reviewImg.setAttribute('src', review.pic);
+      reviewImg.setAttribute('alt', 'user-review');
+
+      const contentWrap = document.createElement('div');
+      const comment = document.createElement('div');
+      comment.innerHTML = review.comment;
+      const stars = document.createElement('div');
+      stars.style.textAlign = 'center';
+      stars.innerHTML = review.stars;
+      contentWrap.appendChild(comment);
+      contentWrap.appendChild(stars);
+
+      reviewWrap.appendChild(reviewImg);
+      reviewWrap.appendChild(contentWrap);
+      reviewWrap.style.display = 'none';
+      reviews.appendChild(reviewWrap);
+   });
+
+}
+
 function popUsers() {
    clearTable(usersTable);
    sort(users);
@@ -367,6 +453,19 @@ function sortEventsData() {
    }
 }
 
+function showReviews() {
+   const reviews = document.getElementsByClassName('review');
+   for (let i = 0; i < reviews.length; i++) {
+      reviews[i].style.display = 'none';
+   }
+   reviewIndex++;
+   if (reviewIndex > reviews.length) {
+      reviewIndex = 1
+   }
+   reviews[reviewIndex - 1].style.display = 'flex';
+   setTimeout(showReviews, 5000); // Change review every 2 seconds
+}
+
 function registerListeners() {
    // PWA related
    window.addEventListener('beforeinstallprompt', function (ev) {
@@ -470,184 +569,115 @@ function registerListeners() {
 
 }
 
-// Main Execution
-
-// If application hasn't been setup yet, navigate to the setup page
-if (db() == null) {
+function initializeAppObject() {
    const baseObj = {
       config: {
-         headers: {
-
-         },
-         sort: {
-
-         }
+         headers: {},
+         sort: {}
       },
       data: []
    }
+
    const team = {
       users: clone(baseObj),
       roles: clone(baseObj),
       events: clone(baseObj)
    }
+
+   team.users.headers = {
+      id: {
+         label: 'id',
+         name: 'id',
+         type: 'numeric',
+         visible: false
+      },
+      name: {
+         label: 'Name',
+         name: 'name',
+         type: 'text',
+         visible: true
+      },
+      role: {
+         label: 'Role',
+         name: 'role',
+         type: 'text',
+         visible: true
+      },
+      pic: {
+         label: 'User Pic',
+         name: 'pic',
+         type: 'image',
+         visible: true
+      },
+   };
+
+   team.roles.headers = {
+      id: {
+         label: 'id',
+         name: 'id',
+         type: 'numeric',
+         visible: false
+      },
+      name: {
+         label: 'Name',
+         name: 'name',
+         type: 'text',
+         visible: true
+      },
+      description: {
+         label: 'Description',
+         name: 'description',
+         type: 'text',
+         visible: true
+      },
+      members: {
+         label: 'Members',
+         name: 'members',
+         type: 'array',
+         visible: true
+      },
+   };
+
+   team.events.headers = {
+      id: {
+         label: 'id',
+         name: 'id',
+         type: 'numeric',
+         visible: false
+      },
+      userId: {
+         label: 'User',
+         name: 'userId',
+         type: 'numeric',
+         visible: false
+      },
+      date: {
+         label: 'Date',
+         name: 'date',
+         type: 'numeric',
+         visible: true
+      },
+      readBy: {
+         label: 'Read By',
+         name: 'readBy',
+         type: 'numeric',
+         visible: true
+      }
+   };
+
    localStorage.setItem(TEAMORG_KEY, JSON.stringify(team));
 }
 
-const users = db().users; /*{
-   config: {
-      headers: {
-         id: {
-            label: 'id',
-            name: 'id',
-            type: 'numeric',
-            visible: false
-         },
-         name: {
-            label: 'Name',
-            name: 'name',
-            type: 'text',
-            visible: true
-         },
-         role: {
-            label: 'Role',
-            name: 'role',
-            type: 'text',
-            visible: true
-         },
-         pic: {
-            label: 'User Pic',
-            name: 'pic',
-            type: 'image',
-            visible: true
-         },
-      },
-      sort: {
-         sortBy: 'id',
-         sortMode: 'asc'
-      }
-   },
-   data: [
-      {
-         id: 0,
-         name: 'Lefteris',
-         role: 'Admin',
-         pic: 'img/user-male-1.svg',
-      },
-      {
-         id: 1,
-         name: 'Nikos',
-         role: 'Player',
-         pic: 'img/user-male-2.svg',
-      },
-      {
-         id: 2,
-         name: 'Xristina',
-         role: 'Player',
-         pic: 'img/user-female-1.svg',
-      }
-   ]
-}*/
+// Main Execution
 
-const roles = db().roles; /*{
-   config: {
-      headers: {
-         id: {
-            label: 'id',
-            name: 'id',
-            type: 'numeric',
-            visible: false
-         },
-         name: {
-            label: 'Name',
-            name: 'name',
-            type: 'text',
-            visible: true
-         },
-         description: {
-            label: 'Description',
-            name: 'description',
-            type: 'text',
-            visible: true
-         },
-         members: {
-            label: 'Members',
-            name: 'members',
-            type: 'array',
-            visible: true
-         },
-      },
-      sort: {
-         sortBy: 'id',
-         sortMode: 'asc'
-      }
-   },
-   data: [
-      {
-         id: 0,
-         name: 'Admin',
-         description: 'Administrator role',
-         members: []
-      },
-      {
-         id: 1,
-         name: 'Player',
-         description: 'Simple users role',
-         members: []
-      }
-   ]
-}*/
+// If application hasn't been setup yet, navigate to the setup page
+if (db() == null) {
+   initializeAppObject();
+}
 
-const events = db().events; /*{
-   config: {
-      headers: {
-         id: {
-            label: 'id',
-            name: 'id',
-            type: 'numeric',
-            visible: false
-         },
-         userId: {
-            label: 'User',
-            name: 'userId',
-            type: 'numeric',
-            visible: false
-         },
-         date: {
-            label: 'Date',
-            name: 'date',
-            type: 'numeric',
-            visible: true
-         },
-         readBy: {
-            label: 'Read By',
-            name: 'readBy',
-            type: 'numeric',
-            visible: true
-         }
-      },
-      sort: {
-         sortBy: 'id',
-         sortMode: 'asc'
-      }
-   },
-   data: [
-      {
-         id: 0,
-         userId: 0,
-         content: '@Coach, I won\'t make it to the training today',
-         date: Date.now(),
-         readBy: 0,
-      },
-      {
-         id: 1,
-         userId: 1,
-         content: 'Next match vs Napoli on Sunday: 21:45<br>#matchday, #away-game, #derby',
-         date: Date.now(),
-         readBy: 0,
-      }
-   ]
-}*/
-
+const users = db().users;
+const roles = db().roles;
+const events = db().events;
 const icons = [
    {id: 0, name: 'img/user.svg'},
    {id: 1, name: 'img/user-male-1.svg'},
@@ -661,13 +691,39 @@ const icons = [
    {id: 9, name: 'img/user-artist.svg'},
    {id: 10, name: 'img/user-boss.svg'},
 ];
+const reviewData = [{
+   pic: 'img/user-boss.svg',
+   comment: 'Guardiola - Wow! I manage my team way better now!',
+   stars: '⭐⭐⭐⭐'
+}, {
+   pic: 'img/user-male-2.svg',
+   comment: 'Van Nistelroy - Astonishing application! Definitely recommend it!',
+   stars: '⭐⭐⭐⭐⭐'
+}, {
+   pic: 'img/user-boss.svg',
+   comment: 'Sir Alex - A beautiful app with great capabilities!',
+   stars: '⭐⭐⭐⭐⭐'
+}, {
+   pic: 'img/user-boss.svg',
+   comment: 'Mourinio - A great team, need great tools like TeamOrg!',
+   stars: '⭐⭐⭐⭐'
+}, {
+   pic: 'img/user-artist.svg',
+   comment: 'Picaso - This app is an artwork! Better than my art!',
+   stars: '⭐⭐⭐⭐⭐'
+}];
 
+const teamInfo = document.getElementById('team-info');
+const recentPosts = document.getElementById('recent-posts');
+const reviews = document.getElementById('teamorg-reviews-section');
 const usersTable = document.getElementById('users-table');
 const rolesTable = document.getElementById('roles-table');
 const eventsWrapper = document.getElementById('events-wrapper');
 const eventsItemTemplate = document.getElementById('event-item-template');
 
+let reviewIndex = 0;
 
+popMain();
 popUsers();
 popRoles();
 popEvents();
@@ -681,5 +737,6 @@ const interval = setInterval(function increaseReadBy() {
    });
    popEvents();
 }, 10000);
+showReviews();
 
 registerListeners();

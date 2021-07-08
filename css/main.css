@@ -14,18 +14,25 @@
    --padding-mid: 10px;
 }
 
-/* var(--primary-main); */
-
 /**************
 *** Generic ***
 ***************/
 body {
    margin: 0;
-   font-family: Helvetica, sans-serif;
+   font-family: cursive, Helvetica, sans-serif;
 }
 
 body > div {
    margin: 15px;
+}
+
+strong a {
+   color: var(--primary-main);
+   text-decoration: none;
+}
+
+strong a:hover {
+   text-decoration: underline;
 }
 
 table {
@@ -199,59 +206,118 @@ header a:hover {
 ****************/
 #home {
    display: flex;
-   flex-direction: row;
-   justify-content: space-between;
+   flex-direction: column;
 }
 
-.team-section {
+#home div.main-section {
    display: flex;
-   flex-direction: column;
+   flex-direction: row;
+   justify-content: flex-start;
    align-items: center;
 }
 
-.team-section img {
+.team-intro-section {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   max-width: 50%;
+   margin-right: 25px;
+}
+
+.team-intro-section img {
    width: 100px;
    height: 100px;
+   padding-left: 15px;
 }
 
-.activity-section {
-   display: flex;
-   flex-direction: column;
-   align-items: center;
-   justify-content: flex-start;
-
-   border: 1px ridge var(--primary-main);
-   border-radius: 5px;
-   padding: 0 var(--padding-mini) 0 var(--padding-mini);
+.team-intro-section span.title {
+   font-size: 28px;
 }
 
-.activity-section-item {
-   display: flex;
-   flex-direction: row;
-   align-content: center;
-   align-items: center;
-   justify-content: space-around;
-   max-height: 60px;
-
-   border: 1px ridge var(--primary-light);
-   border-radius: 5px;
-   margin: 5px 5px;
+.team-intro-section span.promo {
+   font-size: 21px;
+   margin-bottom: 25px;
 }
 
-.activity-section img {
-   width: 50px;
-   height: 50px;
+.team-intro-section span:not(.title):not(.promo) {
+   font-style: italic;
+   text-align: center;
+   margin: var(--padding-mini);
 }
 
-.hide-activity-item-btn {
-   /* TODO  */
-}
-
-.wrapper-section {
+.team-info-section {
    display: flex;
    flex-direction: column;
    align-content: center;
    justify-content: space-between;
+}
+
+#teamorg-reviews-section {
+   display: flex;
+   flex-direction: row;
+   justify-content: space-evenly;
+}
+
+#recent-posts img {
+   width: 24px;
+   height: 24px;
+   margin-right: var(--padding-mini);
+}
+
+#recent-posts li div {
+   display: flex;
+   flex-direction: row;
+   overflow: hidden;
+   width: 250px;
+   height: 28px;
+}
+
+#home > h4 {
+   text-align: center;
+   margin-top: 25px;
+}
+
+#teamorg-reviews-section > div {
+   display: flex;
+   flex-direction: row;
+}
+
+#teamorg-reviews-section img {
+   margin: var(--padding-mini);
+   width: 24px;
+   height: 24px;
+}
+
+#teamorg-reviews-section div.review-wrapper {
+   display: flex;
+   flex-direction: column;
+   justify-content: space-around;
+}
+
+/* Fading animation */
+.fade {
+   -webkit-animation-name: fade;
+   -webkit-animation-duration: 2.5s;
+   animation-name: fade;
+   animation-duration: 2.5s;
+}
+
+@-webkit-keyframes fade {
+   from {
+      opacity: .5
+   }
+   to {
+      opacity: 1
+   }
+}
+
+@keyframes fade {
+   from {
+      opacity: .5
+   }
+   to {
+      opacity: 1
+   }
 }
 
 .member-icons-wrapper {
@@ -314,7 +380,7 @@ header a:hover {
    display: flex;
    flex-direction: column;
    align-items: center;
-   width: 60px;
+   width: 80px;
 }
 
 .event-item .user-wrapper span {
@@ -447,17 +513,20 @@ header a:hover {
 
 @media only screen and (max-width: 900px) {
 
-   #home {
+   #home div.main-section {
       flex-direction: column;
    }
 
-   .info-section, .upcoming-events-section {
+   .team-intro-section {
+      max-width: unset;
+   }
+
+   #team-info, #recent-posts {
       align-self: center;
    }
 
-   #overview .player-stats {
-      grid-template-columns: 28% 34% 38%;
-      grid-gap: 2px;
+   #team-info h4, #recent-posts h4 {
+      text-align: center;
    }
 
 }
@@ -466,6 +535,10 @@ header a:hover {
    header, .header-left, .header-right {
       flex-direction: column;
       align-items: center;
+   }
+
+   .team-info-section {
+      flex-direction: column;
    }
 
    #actions {
